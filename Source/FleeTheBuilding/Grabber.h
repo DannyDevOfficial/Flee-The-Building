@@ -22,8 +22,21 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime,
+							   ELevelTick TickType,
+							   FActorComponentTickFunction* ThisTickFunction) override;
 
-		
+private:
+	
+	/// <summary>
+	/// Draws the reach ray for debugging purposes.
+	/// </summary>
+	void DrawReachRay();
+
+private:
+
+	// How far ahead of the player we can reach in cm
+	UPROPERTY(EditAnywhere)
+		float reach = 100.0f;
 	
 };
