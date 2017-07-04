@@ -54,7 +54,7 @@ private:
 
 	// Time to wait before door closes
 	UPROPERTY(EditAnywhere)
-		float timeBeforeClosing = 2.0f;
+		float timeBeforeClosing = 0.3f;
 
 	// Pressure Plate that will allow actor to open the door
 	UPROPERTY(EditAnywhere)

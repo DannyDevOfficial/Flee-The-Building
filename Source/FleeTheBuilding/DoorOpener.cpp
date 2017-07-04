@@ -23,17 +23,17 @@ void UDoorOpener::BeginPlay()
 	Super::BeginPlay();
 
 	// If there isn't a pressure plate...
-	if (pressurePlate->IsActorInitialized())
+	if (!pressurePlate)
 		// Log error to output log
-		UE_LOG(LogTemp, Error, TEXT("No pressure plate in the level!"));
+		GLog->Log("No pressure plate in the level!");
 
 	// Get the actor that opens
 	actorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
 
 	// If the actor wasn't initialized
-	if (actorThatOpens->IsActorInitialized())
+	if (!actorThatOpens)
 		// Log error to output log
-		UE_LOG(LogTemp, Error, TEXT("No actor in the level!"));
+		GLog->Log("No actor in the level!");
 	
 	// Get time since last open
 	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
@@ -60,13 +60,12 @@ void UDoorOpener::Open() {
 
 void UDoorOpener::Close() {
 	// Close the door by setting its rotation back to 0
-	GetOwner()->SetActorRotation(FRotator(0.0f, 0.0f, 0.0f));
+	GetOwner()->SetActorRotation(FRotator(0.0f, -openAngle, 0.0f));
 }
 
 void UDoorOpener::RunDoorMechanism() {
-	// If the actor is on pressure plate
+	// If the actor is on pressure plate, open the door
 	if (pressurePlate->IsOverlappingActor(actorThatOpens))
-		// Open it
 		Open();
 
 	// Close the door when more than the given amount of secs have passed since
