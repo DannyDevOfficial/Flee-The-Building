@@ -27,9 +27,9 @@ public:
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-	
+		
 	/// <summary>
-	/// Draws the reach ray for debugging purposes.
+	/// Draws the ray to detect objects we hit.
 	/// </summary>
 	void DrawReachRay();
 
@@ -38,5 +38,9 @@ private:
 	// How far ahead of the player we can reach in cm
 	UPROPERTY(EditAnywhere)
 		float reach = 100.0f;
+
+	// Whether or not it should draw a debug ray
+	UPROPERTY(EditAnywhere)
+		bool drawDebugRay = false;
 	
 };

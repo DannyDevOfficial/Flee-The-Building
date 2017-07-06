@@ -39,7 +39,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 }
 
 void UGrabber::DrawReachRay() {
-	// Get player's viewpoint and store it in these two variables
+	/// Get player's viewpoint and store it in these two variables
 	FVector playerLocation;
 	FRotator playerRotation;
 
@@ -48,13 +48,28 @@ void UGrabber::DrawReachRay() {
 	// Get line trace ending point
 	FVector lineTraceEnd = playerLocation + playerRotation.Vector() * reach;
 
-	DrawDebugLine(GetWorld(),
-				  playerLocation,
-				  lineTraceEnd,
-				  FColor(255, 0, 0),
-				  false,
-				  -1.0f,
-				  (uint8)'\000',
-				  2.0f);
+	// Draw debug ray if flag is set to true
+	if (drawDebugRay)
+		DrawDebugLine(GetWorld(),
+					  playerLocation,
+					  lineTraceEnd,
+					  FColor(255, 0, 0),
+					  false,
+					  -1.0f,
+					  (uint8)'\000',
+					  2.0f);
+
+	// Store hit info
+	FHitResult hitInfo;
+
+	// Get hit objects in the world and store their info in hit result
+	if (GetWorld()->LineTraceSingleByObjectType(hitInfo,
+											playerLocation,
+											lineTraceEnd,
+											FCollisionObjectQueryParams(
+												ECollisionChannel::ECC_PhysicsBody
+											)))
+		// Log hit info to the console if there is any hit
+		GLog->Log(hitInfo.GetActor()->GetName());
 }
 
