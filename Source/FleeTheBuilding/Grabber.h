@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+class UPhysicsHandleComponent;
 #include "Grabber.generated.h"
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FLEETHEBUILDING_API UGrabber : public UActorComponent
@@ -43,4 +43,6 @@ private:
 	UPROPERTY(EditAnywhere)
 		bool drawDebugRay = false;
 	
+	// Physics handle for handling physics (Duh!)
+	UPhysicsHandleComponent* physicsHandler = nullptr;
 };

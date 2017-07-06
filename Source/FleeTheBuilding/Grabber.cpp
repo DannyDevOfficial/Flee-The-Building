@@ -6,6 +6,7 @@
 #include <GameFramework/Controller.h>
 #include <Engine/World.h>
 #include <DrawDebugHelpers.h>
+#include <PhysicsEngine/PhysicsHandleComponent.h>
 
 
 // Sets default values for this component's properties
@@ -24,8 +25,13 @@ void UGrabber::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	// Grab the attached physics handle component
+	physicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	
+	// Log error to the console in case it wasn't found
+	if (!physicsHandler)
+		GLog->Log(ELogVerbosity::Error,
+				  "No UPhysicsHandleComponent for: " + GetOwner()->GetName());
 }
 
 
