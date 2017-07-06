@@ -32,6 +32,14 @@ void UGrabber::BeginPlay()
 	if (!physicsHandler)
 		GLog->Log(ELogVerbosity::Error,
 				  "No UPhysicsHandleComponent for: " + GetOwner()->GetName());
+
+	// Grab the attached input component
+	inputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+
+	// Log error if it can't find it
+	if (!inputComponent)
+		GLog->Log(ELogVerbosity::Error,
+				  "No UInputComponent for: " + GetOwner()->GetName());
 }
 
 
@@ -42,6 +50,10 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	// Draw the ray
 	DrawReachRay();
+
+	/// Grabbing and releasing input actions
+	inputComponent->BindAction("Grab", EInputEvent::IE_Pressed, this, &UGrabber::Grab);
+	inputComponent->BindAction("Grab", EInputEvent::IE_Released, this, &UGrabber::Release);
 }
 
 void UGrabber::DrawReachRay() {
@@ -77,5 +89,15 @@ void UGrabber::DrawReachRay() {
 											)))
 		// Log hit info to the console if there is any hit
 		GLog->Log(hitInfo.GetActor()->GetName());
+}
+
+void UGrabber::Grab() {
+	// Log temporarily
+	GLog->Log("Grabbing");
+}
+
+void UGrabber::Release() {
+	// Log temporarily
+	GLog->Log("Releasing");
 }
 

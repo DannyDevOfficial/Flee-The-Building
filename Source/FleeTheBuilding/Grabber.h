@@ -32,6 +32,16 @@ private:
 	/// Draws the ray to detect objects we hit.
 	/// </summary>
 	void DrawReachRay();
+	
+	/// <summary>
+	/// Grabs a physics object.
+	/// </summary>
+	void Grab();
+	
+	/// <summary>
+	/// Releases a physics object.
+	/// </summary>
+	void Release();
 
 private:
 
@@ -45,4 +55,7 @@ private:
 	
 	// Physics handle for handling physics (Duh!)
 	UPhysicsHandleComponent* physicsHandler = nullptr;
+
+	// Input component to handle input (Duh!)
+	UInputComponent* inputComponent = nullptr;
 };
