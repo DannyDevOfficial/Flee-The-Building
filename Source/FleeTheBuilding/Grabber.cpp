@@ -75,45 +75,30 @@ void UGrabber::Grab() {
 }
 
 void UGrabber::Release() {
-	// if there is a physics handle
-	if (physicsHandler)
-		// if there is a grabbed component
-		if (physicsHandler->GrabbedComponent)
-			// Release it
-			physicsHandler->ReleaseComponent();
+	// if there is a grabbed component
+	if (physicsHandler->GrabbedComponent)
+		// Release it
+		physicsHandler->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// if there is a physics handle attached
-	if (physicsHandler)
-		// if there is a grabbed component
-		if (physicsHandler->GrabbedComponent) {
-			/// Get player's viewpoint and store it in these two variables
-			FVector playerLocation;
-			FRotator playerRotation;
+	// if there is a grabbed component
+	if (physicsHandler->GrabbedComponent) {
+		// Get player's look at vector
+		FVector lineTraceEnd = GetLineTraceEnd();
 
-			GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerLocation, playerRotation);
-
-			// Get line trace ending point
-			FVector lineTraceEnd = playerLocation + playerRotation.Vector() * reach;
-
-			// Set grabbed component location every frame
-			physicsHandler->SetTargetLocation(lineTraceEnd);
-		}
+		// Set grabbed component location every frame
+		physicsHandler->SetTargetLocation(lineTraceEnd);
+	}
 }
 
 FHitResult UGrabber::DoLineTraceAndGetHitInfo() {
-	/// Get player's viewpoint and store it in these two variables
-	FVector playerLocation;
-	FRotator playerRotation;
-
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerLocation, playerRotation);
-
-	// Get line trace ending point
-	FVector lineTraceEnd = playerLocation + playerRotation.Vector() * reach;
+	/// Get player's viewpoint
+	FVector playerLocation = GetLineTraceStart();
+	FVector lineTraceEnd = GetLineTraceEnd();
 
 	// Draw debug ray if flag is set to true
 	if (drawDebugRay)
@@ -139,4 +124,26 @@ FHitResult UGrabber::DoLineTraceAndGetHitInfo() {
 
 	// return hit info
 	return hitInfo;
+}
+
+FVector UGrabber::GetLineTraceStart() {
+	/// Get player's viewpoint and store it in these two variables
+	FVector playerLocation;
+	FRotator playerRotation;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerLocation, playerRotation);
+
+	// Return player's location
+	return playerLocation;
+}
+
+FVector UGrabber::GetLineTraceEnd() {
+	/// Get player's viewpoint and store it in these two variables
+	FVector playerLocation;
+	FRotator playerRotation;
+
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerLocation, playerRotation);
+
+	// Return line trace end (look at vector) multiplied by a reach scalar
+	return playerLocation + playerRotation.Vector() * reach;
 }

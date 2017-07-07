@@ -53,6 +53,18 @@ private:
 	/// </summary>
 	/// <returns>The hit objects's info</returns>
 	FHitResult DoLineTraceAndGetHitInfo();
+	
+	/// <summary>
+	/// Gets the line trace start.
+	/// </summary>
+	/// <returns>The line trace starting vector (player's location)</returns>
+	FVector GetLineTraceStart();
+	
+	/// <summary>
+	/// Gets the line trace end.
+	/// </summary>
+	/// <returns>The line trace ending vector (player's look at vector)</returns>
+	FVector GetLineTraceEnd();
 
 private:
 
