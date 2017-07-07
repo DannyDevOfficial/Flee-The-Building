@@ -27,21 +27,32 @@ public:
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
 private:
-		
-	/// <summary>
-	/// Draws the ray to detect objects we hit.
-	/// </summary>
-	void DrawReachRay();
 	
+	/// <summary>
+	/// Initializes the physics handle component.
+	/// </summary>
+	void InitPhysicsHandleComponent();
+	
+	/// <summary>
+	/// Sets up input component and bind actions to it.
+	/// </summary>
+	void SetUpInputComponentAndBindActions();
+
 	/// <summary>
 	/// Grabs a physics object.
 	/// </summary>
 	void Grab();
-	
+
 	/// <summary>
 	/// Releases a physics object.
 	/// </summary>
 	void Release();
+			
+	/// <summary>
+	/// Gets the player viewpoint and performs a line trace.
+	/// </summary>
+	/// <returns>The hit objects's info</returns>
+	FHitResult DoLineTraceAndGetHitInfo();
 
 private:
 
