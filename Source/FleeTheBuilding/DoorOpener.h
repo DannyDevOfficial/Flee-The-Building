@@ -46,22 +46,29 @@ private:
 	/// Takes care of opening and closing the door.
 	/// </summary>
 	void RunDoorMechanism();
+	
+	/// <summary>
+	/// Gets the total mass on pressure plate.
+	/// </summary>
+	/// <returns>The amount of mass in kg on the plate</returns>
+	float GetTotalMassOnPressurePlate() const;
 
 private:
 	// Angle at which a door will open
 	UPROPERTY(EditAnywhere)
 		float openAngle = 90.0f;
 
+	// Minimum mass in kg necessary to open the door
+	UPROPERTY(EditAnywhere)
+		float minMassToOpenDoor = 30.0f;
+
 	// Time to wait before door closes
 	UPROPERTY(EditAnywhere)
-		float timeBeforeClosing = 0.3f;
+		float timeBeforeClosing = 2.0f;
 
 	// Pressure Plate that will allow actor to open the door
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* pressurePlate = nullptr;
-
-	// Actor that will trigger the opening
-	AActor* actorThatOpens = nullptr;
 
 	// Time passed since the door was last open
 	float timeSinceLastOpen = 0.0f;

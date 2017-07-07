@@ -26,14 +26,6 @@ void UDoorOpener::BeginPlay()
 	if (!pressurePlate)
 		// Log error to output log
 		GLog->Log("No pressure plate in the level!");
-
-	// Get the actor that opens
-	actorThatOpens = GetWorld()->GetFirstPlayerController()->GetPawn();
-
-	// If the actor wasn't initialized
-	if (!actorThatOpens)
-		// Log error to output log
-		GLog->Log("No actor in the level!");
 	
 	// Get time since last open
 	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
@@ -64,13 +56,26 @@ void UDoorOpener::Close() {
 }
 
 void UDoorOpener::RunDoorMechanism() {
-	// If the actor is on pressure plate, open the door
-	if (pressurePlate->IsOverlappingActor(actorThatOpens))
+	// If the min amount of mass is on the pressure plate,
+	// open the door
+	if (GetTotalMassOnPressurePlate() >= minMassToOpenDoor)
 		Open();
 
 	// Close the door when more than the given amount of secs have passed since
 	// the door was last open
 	if (GetWorld()->GetTimeSeconds() - timeSinceLastOpen > timeBeforeClosing)
 		Close();
+}
+
+float UDoorOpener::GetTotalMassOnPressurePlate() const {
+	// The mass total that will get returned
+	float totalMass = 0.0f;
+
+	// Calculate the amount of mass on the pressure plate
+	// by getting overlapping actors and accessing their physics
+	// components one by one
+
+	// Return the total mass
+	return totalMass;
 }
 

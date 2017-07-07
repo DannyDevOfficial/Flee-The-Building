@@ -70,7 +70,7 @@ private:
 
 	// How far ahead of the player we can reach in cm
 	UPROPERTY(EditAnywhere)
-		float reach = 100.0f;
+		float reach = 120.0f;
 
 	// Whether or not it should draw a debug ray
 	UPROPERTY(EditAnywhere)
