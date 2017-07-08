@@ -25,9 +25,6 @@ void UDoorOpener::BeginPlay()
 	if (!pressurePlate)
 		// Log error to output log
 		GLog->Log(ELogVerbosity::Error, "No pressure plate in the level!");
-	
-	// Get time since last open
-	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
 }
 
 
@@ -42,30 +39,14 @@ void UDoorOpener::TickComponent(float DeltaTime,
 	RunDoorMechanism();
 }
 
-void UDoorOpener::Open() {
-	// Open the door by setting its rotation to open angle
-	GetOwner()->SetActorRotation(FRotator(0.0f,
-										  openAngle - openAngleOffset,
-										  0.0f));
-	// Set time since last open to now
-	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
-}
-
-void UDoorOpener::Close() {
-	// Close the door by setting its rotation back to 0
-	GetOwner()->SetActorRotation(FRotator(0.0f, -openAngleOffset, 0.0f));
-}
-
 void UDoorOpener::RunDoorMechanism() {
 	// If the min amount of mass is on the pressure plate,
 	// open the door
 	if (GetTotalMassOnPressurePlate() >= minMassToOpenDoor)
-		Open();
-
-	// Close the door when more than the given amount of secs have passed since
-	// the door was last open
-	if (GetWorld()->GetTimeSeconds() - timeSinceLastOpen > timeBeforeClosing)
-		Close();
+		onOpenRequest.Broadcast();
+	else
+		// Close the door when the weight isn't enough
+		onCloseRequest.Broadcast();
 }
 
 float UDoorOpener::GetTotalMassOnPressurePlate() const {

@@ -8,6 +8,8 @@
 #include "Components/ActorComponent.h"
 #include "DoorOpener.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorEvent);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 /// <summary>
 /// A class that commands doors' opening
@@ -31,17 +33,18 @@ public:
 							   ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
-private:	
-	/// <summary>
-	/// Opens this instance of the door.
-	/// </summary>
-	void Open();
-	
-	/// <summary>
-	/// Closes this instance of the door.
-	/// </summary>
-	void Close();
-	
+public:
+	// Instance of a class that will be used in blueprint
+	// once the door has to open
+	UPROPERTY(BlueprintAssignable)
+		FDoorEvent onOpenRequest;
+
+	// Instance of a class that will be used in blueprint
+	// once the door has to close
+	UPROPERTY(BlueprintAssignable)
+		FDoorEvent onCloseRequest;
+
+private:		
 	/// <summary>
 	/// Takes care of opening and closing the door.
 	/// </summary>
@@ -54,25 +57,11 @@ private:
 	float GetTotalMassOnPressurePlate() const;
 
 private:
-	// Angle at which a door will open
-	UPROPERTY(EditAnywhere)
-		float openAngle = -90.0f;
-
 	// Minimum mass in kg necessary to open the door
 	UPROPERTY(EditAnywhere)
 		float minMassToOpenDoor = 30.0f;
 
-	// Time to wait before door closes
-	UPROPERTY(EditAnywhere)
-		float timeBeforeClosing = 2.0f;
-
 	// Pressure Plate that will allow actor to open the door
 	UPROPERTY(EditAnywhere)
 		ATriggerVolume* pressurePlate = nullptr;
-
-	// Time passed since the door was last open
-	float timeSinceLastOpen = 0.0f;
-
-	// Offset for openAngle to account for initial rotation
-	float openAngleOffset = 90.0f;
 };
