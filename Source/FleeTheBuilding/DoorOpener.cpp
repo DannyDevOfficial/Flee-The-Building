@@ -4,6 +4,7 @@
 
 #include <Engine/World.h>
 #include <GameFramework/PlayerController.h>
+#include <Components/PrimitiveComponent.h>
 
 
 // Sets default values for this component's properties
@@ -45,14 +46,16 @@ void UDoorOpener::TickComponent(float DeltaTime,
 
 void UDoorOpener::Open() {
 	// Open the door by setting its rotation to open angle
-	GetOwner()->SetActorRotation(FRotator(0.0f, openAngle, 0.0f));
+	GetOwner()->SetActorRotation(FRotator(0.0f,
+										  openAngle - openAngleOffset,
+										  0.0f));
 	// Set time since last open to now
 	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
 }
 
 void UDoorOpener::Close() {
 	// Close the door by setting its rotation back to 0
-	GetOwner()->SetActorRotation(FRotator(0.0f, -openAngle, 0.0f));
+	GetOwner()->SetActorRotation(FRotator(0.0f, -openAngleOffset, 0.0f));
 }
 
 void UDoorOpener::RunDoorMechanism() {
@@ -71,9 +74,22 @@ float UDoorOpener::GetTotalMassOnPressurePlate() const {
 	// The mass total that will get returned
 	float totalMass = 0.0f;
 
-	// Calculate the amount of mass on the pressure plate
-	// by getting overlapping actors and accessing their physics
-	// components one by one
+	// Array where to store all the overlapping actors
+	TArray<AActor*> overlappingActors;
+
+	// Get all the overlapping actors and store them in
+	// the previously declared array
+	pressurePlate->GetOverlappingActors(overlappingActors);
+
+	// Loop throug the overlapping actors
+	for (AActor* overlappingActor : overlappingActors) {
+		// Get this overlapping actor's mass
+		float massInKg = 
+			overlappingActor->GetRootPrimitiveComponent()->GetMass();
+
+		// add that mass to the total mass
+		totalMass += massInKg;
+	}
 
 	// Return the total mass
 	return totalMass;

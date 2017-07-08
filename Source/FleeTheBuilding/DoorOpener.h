@@ -72,4 +72,7 @@ private:
 
 	// Time passed since the door was last open
 	float timeSinceLastOpen = 0.0f;
+
+	// Offset for openAngle to account for initial rotation
+	float openAngleOffset = 90.0f;
 };
