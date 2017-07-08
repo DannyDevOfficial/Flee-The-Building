@@ -13,8 +13,6 @@ UDoorOpener::UDoorOpener()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
 
@@ -26,7 +24,7 @@ void UDoorOpener::BeginPlay()
 	// If there isn't a pressure plate...
 	if (!pressurePlate)
 		// Log error to output log
-		GLog->Log("No pressure plate in the level!");
+		GLog->Log(ELogVerbosity::Error, "No pressure plate in the level!");
 	
 	// Get time since last open
 	timeSinceLastOpen = GetWorld()->GetTimeSeconds();
@@ -71,6 +69,10 @@ void UDoorOpener::RunDoorMechanism() {
 }
 
 float UDoorOpener::GetTotalMassOnPressurePlate() const {
+	// Get out of here if there is no pressure plate!
+	if (!pressurePlate)
+		return 0.0f;
+
 	// The mass total that will get returned
 	float totalMass = 0.0f;
 

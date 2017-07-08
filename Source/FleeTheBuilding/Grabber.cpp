@@ -71,10 +71,17 @@ void UGrabber::Grab() {
 										  NAME_None,
 										  componentToGrab->GetOwner()->GetActorLocation(),
 										  true);
+		else
+			// Get out if there is no physics handle!
+			return;
 	}
 }
 
 void UGrabber::Release() {
+	// Get out if there is no physics handle
+	if (!physicsHandler)
+		return;
+
 	// if there is a grabbed component
 	if (physicsHandler->GrabbedComponent)
 		// Release it
@@ -84,6 +91,10 @@ void UGrabber::Release() {
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	// Get out if there is no physics handle
+	if (!physicsHandler)
+		return;
 
 	// if there is a grabbed component
 	if (physicsHandler->GrabbedComponent) {

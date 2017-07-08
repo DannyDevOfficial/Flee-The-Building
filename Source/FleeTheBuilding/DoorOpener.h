@@ -56,7 +56,7 @@ private:
 private:
 	// Angle at which a door will open
 	UPROPERTY(EditAnywhere)
-		float openAngle = 90.0f;
+		float openAngle = -90.0f;
 
 	// Minimum mass in kg necessary to open the door
 	UPROPERTY(EditAnywhere)
