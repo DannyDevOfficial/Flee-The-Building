@@ -2,12 +2,12 @@
 
 #include "Grabber.h"
 
-#include <GameFramework/PlayerController.h>
-#include <GameFramework/Controller.h>
-#include <Engine/World.h>
-#include <DrawDebugHelpers.h>
-#include <PhysicsEngine/PhysicsHandleComponent.h>
-#include <Components/PrimitiveComponent.h>
+#include "GameFramework/PlayerController.h"
+#include "GameFramework/Controller.h"
+#include "Engine/World.h"
+#include "DrawDebugHelpers.h"
+#include "PhysicsEngine/PhysicsHandleComponent.h"
+#include "Components/PrimitiveComponent.h"
 
 
 // Sets default values for this component's properties
@@ -22,37 +22,30 @@ UGrabber::UGrabber() {
 void UGrabber::BeginPlay() {
 	Super::BeginPlay();
 
-	/// Call methods to set up components
-	InitPhysicsHandleComponent();
-	SetUpInputComponentAndBindActions();
-}
-
-void UGrabber::InitPhysicsHandleComponent() {
 	// Grab the attached physics handle component
-	physicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
+	_physicsHandler = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 
-	// Log error to the console in case it wasn't found
-	if (!physicsHandler)
-		GLog->Log(ELogVerbosity::Error,
-				  "No UPhysicsHandleComponent for: " + GetOwner()->GetName());
+	SetUpInputComponentAndBindActions();
 }
 
 void UGrabber::SetUpInputComponentAndBindActions() {
 	// Grab the attached input component
-	inputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	_inputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
 
-	// Log error if it can't find it
-	if (!inputComponent) {
-		GLog->Log(ELogVerbosity::Error,
-				  "No UInputComponent for: " + GetOwner()->GetName());
-	} else {
-		/// Grabbing and releasing input actions
-		inputComponent->BindAction("Grab", EInputEvent::IE_Pressed, this, &UGrabber::Grab);
-		inputComponent->BindAction("Grab", EInputEvent::IE_Released, this, &UGrabber::Release);
-	}
+	// Get out if there is no input component
+	if (!ensure(_inputComponent))
+		return;
+
+	/// Grabbing and releasing input actions
+	_inputComponent->BindAction("Grab", EInputEvent::IE_Pressed, this, &UGrabber::Grab);
+	_inputComponent->BindAction("Grab", EInputEvent::IE_Released, this, &UGrabber::Release);
 }
 
 void UGrabber::Grab() {
+	// Get out if there is no physics handler
+	if (!ensure(_physicsHandler))
+		return;
+
 	// Get hit info
 	FHitResult hitResult = DoLineTraceAndGetHitInfo();
 
@@ -64,45 +57,40 @@ void UGrabber::Grab() {
 		// Get actor related to hit result
 		UPrimitiveComponent* componentToGrab = hitResult.GetComponent();
 
-		// if there is a physics handle attached then
-		// grab component
-		if (physicsHandler)
-			physicsHandler->GrabComponent(componentToGrab,
-										  NAME_None,
-										  componentToGrab->GetOwner()->GetActorLocation(),
-										  true);
-		else
-			// Get out if there is no physics handle!
-			return;
+		// Grab component
+		_physicsHandler->GrabComponent(componentToGrab,
+										NAME_None,
+										componentToGrab->GetOwner()->GetActorLocation(),
+										true);
 	}
 }
 
 void UGrabber::Release() {
-	// Get out if there is no physics handle
-	if (!physicsHandler)
+	// Get out if there is no physics handler
+	if (!ensure(_physicsHandler))
 		return;
 
 	// if there is a grabbed component
-	if (physicsHandler->GrabbedComponent)
+	if (_physicsHandler->GrabbedComponent)
 		// Release it
-		physicsHandler->ReleaseComponent();
+		_physicsHandler->ReleaseComponent();
 }
 
 // Called every frame
 void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// Get out if there is no physics handle
-	if (!physicsHandler)
+	// Get out if there is no physics handler
+	if (!ensure(_physicsHandler))
 		return;
 
 	// if there is a grabbed component
-	if (physicsHandler->GrabbedComponent) {
+	if (_physicsHandler->GrabbedComponent) {
 		// Get player's look at vector
 		FVector lineTraceEnd = GetLineTraceEnd();
 
 		// Set grabbed component location every frame
-		physicsHandler->SetTargetLocation(lineTraceEnd);
+		_physicsHandler->SetTargetLocation(lineTraceEnd);
 	}
 }
 
@@ -112,7 +100,7 @@ FHitResult UGrabber::DoLineTraceAndGetHitInfo() {
 	FVector lineTraceEnd = GetLineTraceEnd();
 
 	// Draw debug ray if flag is set to true
-	if (drawDebugRay)
+	if (_bDrawDebugRay)
 		DrawDebugLine(GetWorld(),
 					  playerLocation,
 					  lineTraceEnd,
@@ -155,6 +143,6 @@ FVector UGrabber::GetLineTraceEnd() {
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(playerLocation, playerRotation);
 
-	// Return line trace end (look at vector) multiplied by a reach scalar
-	return playerLocation + playerRotation.Vector() * reach;
+	// Return line trace end (look at vector) multiplied by a reach scalar in cm
+	return playerLocation + playerRotation.Vector() * _reachCm;
 }

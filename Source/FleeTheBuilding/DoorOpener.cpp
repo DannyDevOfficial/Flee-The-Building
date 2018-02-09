@@ -2,9 +2,10 @@
 
 #include "DoorOpener.h"
 
-#include <Engine/World.h>
-#include <GameFramework/PlayerController.h>
-#include <Components/PrimitiveComponent.h>
+#include "Engine/World.h"
+#include "GameFramework/PlayerController.h"
+#include "Components/PrimitiveComponent.h"
+#include "Engine/TriggerVolume.h"
 
 
 // Sets default values for this component's properties
@@ -20,11 +21,6 @@ UDoorOpener::UDoorOpener()
 void UDoorOpener::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// If there isn't a pressure plate...
-	if (!pressurePlate)
-		// Log error to output log
-		GLog->Log(ELogVerbosity::Error, "No pressure plate in the level!");
 }
 
 
@@ -42,7 +38,7 @@ void UDoorOpener::TickComponent(float DeltaTime,
 void UDoorOpener::RunDoorMechanism() {
 	// If the min amount of mass is on the pressure plate,
 	// open the door
-	if (GetTotalMassOnPressurePlate() >= minMassToOpenDoor)
+	if (GetTotalMassOnPressurePlate() >= _minMassKgToOpenDoor)
 		onOpenRequest.Broadcast();
 	else
 		// Close the door when the weight isn't enough
@@ -51,7 +47,7 @@ void UDoorOpener::RunDoorMechanism() {
 
 float UDoorOpener::GetTotalMassOnPressurePlate() const {
 	// Get out of here if there is no pressure plate!
-	if (!pressurePlate)
+	if (!ensure(_pressurePlate))
 		return 0.0f;
 
 	// The mass total that will get returned
@@ -62,14 +58,16 @@ float UDoorOpener::GetTotalMassOnPressurePlate() const {
 
 	// Get all the overlapping actors and store them in
 	// the previously declared array
-	pressurePlate->GetOverlappingActors(overlappingActors);
+	_pressurePlate->GetOverlappingActors(overlappingActors);
 
 	// Loop throug the overlapping actors
 	for (AActor* overlappingActor : overlappingActors) {
-		// Get this overlapping actor's mass
-		// and add it to the total mass
-		totalMass +=
-			Cast<UPrimitiveComponent>(overlappingActor->GetRootComponent())->GetMass();
+		// Do this only if there is an actor
+		if (overlappingActor)
+			// Get this overlapping actor's mass
+			// and add it to the total mass
+			totalMass +=
+				Cast<UPrimitiveComponent>(overlappingActor->GetRootComponent())->GetMass();
 	}
 
 	// Return the total mass

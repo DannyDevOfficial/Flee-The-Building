@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <Engine/TriggerVolume.h>
+class ATriggerVolume;
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -10,11 +10,10 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDoorEvent);
 
+/*
+* A class that commands doors' opening
+*/
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-/// <summary>
-/// A class that commands doors' opening
-/// </summary>
-/// <seealso cref="UActorComponent" />
 class FLEETHEBUILDING_API UDoorOpener: public UActorComponent
 {
 	GENERATED_BODY()
@@ -33,35 +32,29 @@ public:
 							   ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
-public:
-	// Instance of a class that will be used in blueprint
-	// once the door has to open
-	UPROPERTY(BlueprintAssignable)
-		FDoorEvent onOpenRequest;
-
-	// Instance of a class that will be used in blueprint
-	// once the door has to close
-	UPROPERTY(BlueprintAssignable)
-		FDoorEvent onCloseRequest;
-
 private:		
-	/// <summary>
-	/// Takes care of opening and closing the door.
-	/// </summary>
+	/* Takes care of opening and closing the door.
+	*/
 	void RunDoorMechanism();
 	
-	/// <summary>
-	/// Gets the total mass on pressure plate.
-	/// </summary>
-	/// <returns>The amount of mass in kg on the plate</returns>
+	/* Gets the total mass on pressure plate.
+	* @return The amount of mass in kg on the plate
+	*/
 	float GetTotalMassOnPressurePlate() const;
 
-private:
-	// Minimum mass in kg necessary to open the door
-	UPROPERTY(EditAnywhere)
-		float minMassToOpenDoor = 30.0f;
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+		FDoorEvent onOpenRequest;					// Instance of a class that will be used in blueprint
+													// once the door has to open
 
-	// Pressure Plate that will allow actor to open the door
-	UPROPERTY(EditAnywhere)
-		ATriggerVolume* pressurePlate = nullptr;
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+		FDoorEvent onCloseRequest;					// Instance of a class that will be used in blueprint
+													// once the door has to close
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		float _minMassKgToOpenDoor = 30.0f;			// Minimum mass in kg necessary to open the door
+
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		ATriggerVolume* _pressurePlate = nullptr;	// Pressure Plate that will allow actor to open the door
 };

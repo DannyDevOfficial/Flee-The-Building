@@ -2,11 +2,15 @@
 
 #pragma once
 
+class UPhysicsHandleComponent;
+
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-class UPhysicsHandleComponent;
 #include "Grabber.generated.h"
 
+/*
+* Handles the grabbing of physics elements
+*/
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class FLEETHEBUILDING_API UGrabber : public UActorComponent
 {
@@ -26,59 +30,41 @@ public:
 							   ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	
-	/// <summary>
-	/// Initializes the physics handle component.
-	/// </summary>
-	void InitPhysicsHandleComponent();
-	
-	/// <summary>
-	/// Sets up input component and bind actions to it.
-	/// </summary>
+private:	
+	/* Sets up input component and bind actions to it.
+	*/
 	void SetUpInputComponentAndBindActions();
 
-	/// <summary>
-	/// Grabs a physics object.
-	/// </summary>
+	/* Grabs a physics object.
+	*/
 	void Grab();
 
-	/// <summary>
-	/// Releases a physics object.
-	/// </summary>
+	/* Releases a physics object.
+	*/
 	void Release();
 			
-	/// <summary>
-	/// Gets the player viewpoint and performs a line trace.
-	/// </summary>
-	/// <returns>The hit objects's info</returns>
+	/* Gets the player viewpoint and performs a line trace.
+	* @return The hit objects's info
+	*/
 	FHitResult DoLineTraceAndGetHitInfo();
 	
-	/// <summary>
-	/// Gets the line trace start.
-	/// </summary>
-	/// <returns>The line trace starting vector (player's location)</returns>
+	/* Gets the line trace start.
+	* @return The line trace starting vector (player's location)
+	*/
 	FVector GetLineTraceStart();
 	
-	/// <summary>
-	/// Gets the line trace end.
-	/// </summary>
-	/// <returns>The line trace ending vector (player's look at vector)</returns>
+	/* Gets the line trace end.
+	* @return The line trace ending vector (player's look at vector)
+	*/
 	FVector GetLineTraceEnd();
 
 private:
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+		float _reachCm = 120.0f;							// How far ahead of the player we can _reachCm in cm
 
-	// How far ahead of the player we can reach in cm
-	UPROPERTY(EditAnywhere)
-		float reach = 120.0f;
-
-	// Whether or not it should draw a debug ray
-	UPROPERTY(EditAnywhere)
-		bool drawDebugRay = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Debug")
+		bool _bDrawDebugRay = false;						// Whether or not it should draw a debug ray
 	
-	// Physics handle for handling physics (Duh!)
-	UPhysicsHandleComponent* physicsHandler = nullptr;
-
-	// Input component to handle input (Duh!)
-	UInputComponent* inputComponent = nullptr;
+	UPhysicsHandleComponent* _physicsHandler = nullptr;	// Physics handle for handling physics (Duh!)
+	UInputComponent* _inputComponent = nullptr;			// Input component to handle input (Duh!)
 };
