@@ -361,5 +361,4 @@ __pycache__/
 
 # Unreal Engine Starter Content
 Content/StarterContent/
-
-# End of https://www.gitignore.io/api/unrealengine,visualstudio
+Content/InfinityBladeGrassLands/
