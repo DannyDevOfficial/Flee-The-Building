@@ -33,10 +33,10 @@ We use git for versioning, and SourceTree for repo visuals.
 
 ---
 
-* Daniel Grieco - made the entire game
+* Daniel Grieco - initial contributor
 
 ## License
 
 ---
 
-This project is licensed under "Some license".
+This project has no license.

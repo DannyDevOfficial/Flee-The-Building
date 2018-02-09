@@ -69,7 +69,7 @@ float UDoorOpener::GetTotalMassOnPressurePlate() const {
 		// Get this overlapping actor's mass
 		// and add it to the total mass
 		totalMass +=
-			overlappingActor->GetRootPrimitiveComponent()->GetMass();
+			Cast<UPrimitiveComponent>(overlappingActor->GetRootComponent())->GetMass();
 	}
 
 	// Return the total mass
