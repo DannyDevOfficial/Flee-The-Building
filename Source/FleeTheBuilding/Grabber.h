@@ -30,7 +30,13 @@ public:
 							   ELevelTick TickType,
 							   FActorComponentTickFunction* ThisTickFunction) override;
 
-private:	
+private:
+	/* Can the component trigger the grabbing mechanic
+	* @return True if it can grab, false if it can't
+	*/
+	UFUNCTION(BlueprintCallable, Category = "Grabbing")
+		bool IsPossibleToGrabObject() const;
+
 	/* Sets up input component and bind actions to it.
 	*/
 	void SetUpInputComponentAndBindActions();
@@ -65,6 +71,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Debug")
 		bool _bDrawDebugRay = false;						// Whether or not it should draw a debug ray
 	
-	UPhysicsHandleComponent* _physicsHandler = nullptr;	// Physics handle for handling physics (Duh!)
-	UInputComponent* _inputComponent = nullptr;			// Input component to handle input (Duh!)
+	UPhysicsHandleComponent* _physicsHandler = nullptr;		// Physics handle for handling physics (Duh!)
+	UInputComponent* _inputComponent = nullptr;				// Input component to handle input (Duh!)
+	bool _isPossibleToGrabObject = false;					// If it's possible to grab an object
 };

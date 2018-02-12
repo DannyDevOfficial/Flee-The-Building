@@ -28,6 +28,10 @@ void UGrabber::BeginPlay() {
 	SetUpInputComponentAndBindActions();
 }
 
+bool UGrabber::IsPossibleToGrabObject() const {
+	return _isPossibleToGrabObject;
+}
+
 void UGrabber::SetUpInputComponentAndBindActions() {
 	// Grab the attached input component
 	_inputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
@@ -58,10 +62,10 @@ void UGrabber::Grab() {
 		UPrimitiveComponent* componentToGrab = hitResult.GetComponent();
 
 		// Grab component
-		_physicsHandler->GrabComponent(componentToGrab,
-										NAME_None,
-										componentToGrab->GetOwner()->GetActorLocation(),
-										true);
+		_physicsHandler->GrabComponentAtLocationWithRotation(componentToGrab,
+			NAME_None,
+			componentToGrab->GetOwner()->GetActorLocation(),
+			FRotator(0.0f));
 	}
 }
 
@@ -84,8 +88,15 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	if (!ensure(_physicsHandler))
 		return;
 
+	// Check if we hit physics bodies
+	// so the UI can be displayed
+	DoLineTraceAndGetHitInfo();
+
 	// if there is a grabbed component
 	if (_physicsHandler->GrabbedComponent) {
+		// Don't display UI
+		_isPossibleToGrabObject = false;
+
 		// Get player's look at vector
 		FVector lineTraceEnd = GetLineTraceEnd();
 
@@ -102,24 +113,27 @@ FHitResult UGrabber::DoLineTraceAndGetHitInfo() {
 	// Draw debug ray if flag is set to true
 	if (_bDrawDebugRay)
 		DrawDebugLine(GetWorld(),
-					  playerLocation,
-					  lineTraceEnd,
-					  FColor(255, 0, 0),
-					  false,
-					  -1.0f,
-					  (uint8)'\000',
-					  2.0f);
+			playerLocation,
+			lineTraceEnd,
+			FColor(255, 0, 0),
+			false,
+			-1.0f,
+			(uint8)'\000',
+			2.0f);
 
 	// Store hit info
 	FHitResult hitInfo;
 
 	// Get hit objects in the world and store their info in hit result
-	GetWorld()->LineTraceSingleByObjectType(hitInfo,
-											playerLocation,
-											lineTraceEnd,
-											FCollisionObjectQueryParams(
-												ECollisionChannel::ECC_PhysicsBody
-											));
+	bool objectFound = GetWorld()->LineTraceSingleByObjectType(hitInfo, 
+		playerLocation,
+		lineTraceEnd,
+		FCollisionObjectQueryParams(
+			ECollisionChannel::ECC_PhysicsBody
+		));
+
+	// Can display grabbing UI
+	_isPossibleToGrabObject = objectFound ? true : false;
 
 	// return hit info
 	return hitInfo;
