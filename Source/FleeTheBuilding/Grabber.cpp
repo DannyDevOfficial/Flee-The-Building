@@ -50,10 +50,10 @@ void UGrabber::Grab() {
 	FHitResult hitResult = DoLineTraceAndGetHitInfo();
 
 	// Try and grab the actor from the hit result
-	AActor* grabbedActor = hitResult.GetActor();
+	AActor* actorToGrab = hitResult.GetActor();
 
-	// if there is an actor grabbed
-	if (grabbedActor) {
+	// if there is an actor to grab
+	if (actorToGrab) {
 		// Get actor related to hit result
 		UPrimitiveComponent* componentToGrab = hitResult.GetComponent();
 
